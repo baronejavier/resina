@@ -1,0 +1,373 @@
+body{
+font-family:'Poppins', sans-serif;
+margin:0;
+background:#0f1115;
+color:white;
+line-height:1.6;
+}
+
+/* HEADER */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 10%;
+background:#111;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 5px 20px rgba(0,0,0,0.5);
+}
+
+.logo{
+font-size:22px;
+font-weight:600;
+letter-spacing:1px;
+}
+
+nav a{
+margin-left:25px;
+text-decoration:none;
+color:white;
+font-weight:400;
+transition:0.3s;
+}
+
+nav a:hover{
+color:#00e0ff;
+}
+
+
+/* HERO */
+
+.hero{
+height:90vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:0 20px;
+
+background:linear-gradient(
+120deg,
+#000,
+#1e1e1e,
+#000
+);
+
+background-size:200% 200%;
+animation:heroAnim 12s infinite alternate;
+}
+
+@keyframes heroAnim{
+0%{background-position:0% 50%;}
+100%{background-position:100% 50%;}
+}
+
+.hero h1{
+font-size:3rem;
+margin-bottom:20px;
+}
+
+.hero p{
+max-width:600px;
+margin:auto;
+margin-bottom:30px;
+opacity:0.85;
+}
+
+/* BOTONES */
+
+.cta{
+background:#00c2ff;
+padding:15px 35px;
+border-radius:40px;
+text-decoration:none;
+color:white;
+font-weight:600;
+transition:0.3s;
+}
+
+.cta:hover{
+transform:scale(1.05);
+background:#00e0ff;
+}
+
+
+/* STORY */
+
+.story{
+padding:100px 20%;
+text-align:center;
+background:#16181d;
+}
+
+.story h2{
+margin-bottom:20px;
+font-size:2rem;
+}
+
+
+/* PRODUCTOS */
+
+.productos{
+padding:100px 10%;
+text-align:center;
+}
+
+.productos h2{
+font-size:2rem;
+margin-bottom:10px;
+}
+
+
+/* GRID */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:35px;
+margin-top:40px;
+}
+
+
+/* TARJETAS */
+
+.card{
+background:#1a1d23;
+padding:20px;
+border-radius:15px;
+transition:0.4s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-10px) scale(1.02);
+box-shadow:0 20px 40px rgba(0,0,0,0.6);
+}
+
+
+/* IMAGENES DE TARJETA */
+
+.card-img{
+height:220px;
+border-radius:12px;
+margin-bottom:15px;
+position:relative;
+overflow:hidden;
+}
+
+/* brillo epoxi */
+
+.card-img::after{
+content:"";
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.4),
+transparent
+);
+
+transition:0.9s;
+}
+
+.card:hover .card-img::after{
+left:100%;
+}
+
+
+/* EFECTO MARMOL */
+
+.marmol{
+background-image:url("img/marmol.jpg");
+background-size:cover;
+background-position:center;
+}
+
+/* EFECTO OCEANO */
+
+.oceano{
+background:
+radial-gradient(circle at 30% 40%, #00eaff, transparent 50%),
+radial-gradient(circle at 70% 60%, #0077ff, transparent 50%),
+linear-gradient(120deg,#001f4d,#003d99,#0077ff);
+
+background-size:200% 200%;
+animation:oceanoMove 10s infinite alternate;
+}
+
+@keyframes oceanoMove{
+0%{background-position:0% 50%;}
+100%{background-position:100% 50%;}
+}
+
+
+/* EFECTO MADERA */
+
+.madera{
+background:
+repeating-linear-gradient(
+90deg,
+#6b3f1d 0px,
+#6b3f1d 6px,
+#7a4a23 6px,
+#7a4a23 12px,
+#8a5a30 12px,
+#8a5a30 18px
+);
+
+filter:brightness(1.1);
+}
+
+
+/* OFERTAS */
+
+.ofertas{
+padding:100px 10%;
+background:#111;
+text-align:center;
+}
+
+.sub{
+opacity:0.8;
+margin-bottom:40px;
+}
+
+.oferta-card{
+background:#1b1e24;
+padding:30px;
+border-radius:15px;
+border:2px solid #00e0ff;
+transition:0.3s;
+}
+
+.oferta-card:hover{
+transform:scale(1.05);
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+
+.precio{
+font-size:2rem;
+color:#00e0ff;
+display:block;
+margin:15px 0;
+font-weight:600;
+}
+
+.boton-oferta{
+background:#00e0ff;
+padding:10px 25px;
+border-radius:20px;
+text-decoration:none;
+color:black;
+font-weight:600;
+transition:0.3s;
+}
+
+.boton-oferta:hover{
+background:#00c2ff;
+}
+
+
+/* PERSONALIZADO */
+
+.custom{
+padding:100px 20%;
+text-align:center;
+}
+
+.custom h2{
+font-size:2rem;
+margin-bottom:20px;
+}
+
+
+/* CONTACTO */
+
+.contacto{
+padding:100px 20%;
+text-align:center;
+background:#16181d;
+}
+
+.whatsapp{
+background:#25d366;
+padding:15px 35px;
+border-radius:40px;
+text-decoration:none;
+color:white;
+font-size:18px;
+font-weight:600;
+transition:0.3s;
+}
+
+.whatsapp:hover{
+transform:scale(1.05);
+}
+
+
+/* FOOTER */
+
+footer{
+padding:30px;
+text-align:center;
+background:#0a0c0f;
+font-size:14px;
+opacity:0.7;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width:768px){
+
+.hero h1{
+font-size:2.2rem;
+}
+
+.story,
+.custom,
+.contacto{
+padding:80px 10%;
+}
+
+header{
+padding:20px 5%;
+}
+
+nav a{
+margin-left:15px;
+}
+
+}
+
+.oferta-img{
+width:100%;
+max-width:600px;
+height:auto;
+aspect-ratio:1/1;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+/* Estilos del botón flotante de WhatsApp */
+.whatsapp-button {
+    position: fixed;
+    bottom: 2%;
+    right: 2%;
+    width: 15%; /* Ancho cuadrado */
+    height: 15%; /* Altura cuadrada */
+    background-image: url(img/whatsappboton.png); /* Ruta de tu imagen */
+    background-size: cover; /* Para que la imagen se ajuste al botón */
+    text-indent: -9999px; /* Oculta el texto del botón */
+    cursor: pointer;
+    background-position: center; /* Posición centrada de la imagen */
+}
