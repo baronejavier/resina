@@ -21,9 +21,21 @@ box-shadow:0 5px 20px rgba(0,0,0,0.5);
 }
 
 .logo{
+display:flex;
+align-items:center;
+gap:12px;
 font-size:22px;
 font-weight:600;
-letter-spacing:1px;
+letter-spacing:1.5px;
+color:white;
+text-transform:uppercase;
+}
+
+.logo img{
+width:45px;
+height:45px;
+object-fit:contain;
+filter:drop-shadow(0 0 5px rgba(0,224,255,0.5));
 }
 
 nav a{
