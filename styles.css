@@ -163,7 +163,7 @@ box-shadow:0 20px 40px rgba(0,0,0,0.6);
 /* IMAGENES DE TARJETA */
 
 .card-img{
-height:220px;
+height:300px;
 border-radius:12px;
 margin-bottom:15px;
 position:relative;
@@ -228,6 +228,11 @@ repeating-linear-gradient(
 filter:brightness(1.1);
 }
 
+.deco{
+background-image:url("img/lampara.jpg");
+background-size:cover;
+background-position:center;
+}
 
 /* OFERTAS */
 
