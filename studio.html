@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espacio Aura Studio · Selector de Mesadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f4efe9;
+  --surface: #faf8f5;
+  --ink:     #1a1714;
+  --muted:   #6b6560;
+  --gold:    #b8975a;
+  --border:  #ddd7cf;
+  --r:       4px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 3.5rem;border-bottom:1px solid var(--border);background:var(--surface);
+}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:300;letter-spacing:.13em;text-transform:uppercase;}
+.logo em{color:var(--gold);font-style:italic;}
+.tagline{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);}
+
+/* ── LAYOUT ── */
+main{display:grid;grid-template-columns:1fr 390px;min-height:calc(100vh - 68px);}
+
+/* ── PREVIEW ── */
+.preview{padding:2.8rem 3rem;display:flex;flex-direction:column;gap:2rem;}
+.sec-lbl{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem;}
+
+.ct-wrap{position:relative;max-width:720px;}
+.ct-top{
+  width:100%;height:230px;border-radius:3px 3px 0 0;overflow:hidden;position:relative;
+  box-shadow:0 -2px 18px rgba(0,0,0,.07);
+}
+.ct-top::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(150deg,rgba(255,255,255,.25) 0%,transparent 50%);
+  pointer-events:none;
+}
+.ct-front{width:100%;height:26px;overflow:hidden;filter:brightness(.62);}
+.ct-shadow{width:93%;margin:0 auto;height:9px;background:radial-gradient(ellipse,rgba(0,0,0,.2) 0%,transparent 70%);border-radius:50%;}
+canvas.mc{width:100%;height:100%;display:block;}
+
+/* action row */
+.action-row{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:.2rem;}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:none;border:1px solid var(--border);border-radius:var(--r);
+  padding:.42rem .85rem;font-family:'Jost',sans-serif;font-size:.65rem;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--muted);cursor:pointer;
+  transition:border-color .2s,color .2s;
+}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-ghost svg{width:12px;height:12px;}
+
+.btn-dl{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:var(--ink);border:none;border-radius:var(--r);
+  padding:.42rem 1rem;font-family:'Jost',sans-serif;font-size:.65rem;
+  letter-spacing:.15em;text-transform:uppercase;color:#fff;cursor:pointer;
+  transition:background .2s;
+}
+.btn-dl:hover{background:var(--gold);}
+.btn-dl svg{width:12px;height:12px;}
+
+.notice{font-size:.62rem;letter-spacing:.08em;color:var(--muted);opacity:0;transition:opacity .3s;}
+.notice.on{opacity:1;}
+
+/* palette strip */
+.pal-strip{display:flex;height:18px;border-radius:3px;overflow:hidden;max-width:360px;border:1px solid var(--border);}
+.pal-strip .sw{flex:1;transition:flex .4s;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  background:var(--surface);border-left:1px solid var(--border);
+  padding:2.2rem 1.8rem;display:flex;flex-direction:column;gap:1.8rem;
+  overflow-y:auto;max-height:calc(100vh - 68px);position:sticky;top:68px;
+}
+.grp h3{
+  font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:.95rem;padding-bottom:.45rem;border-bottom:1px solid var(--border);
+}
+hr.sep{border:none;border-top:1px solid var(--border);}
+
+/* color rows */
+.color-list{display:flex;flex-direction:column;gap:.85rem;}
+.cr{display:flex;align-items:center;gap:.7rem;}
+.cr label{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);width:76px;flex-shrink:0;}
+input[type=color]{
+  width:34px;height:34px;border:2px solid var(--border);border-radius:50%;
+  cursor:pointer;padding:2px;background:none;outline:none;flex-shrink:0;
+}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0;border-radius:50%;}
+input[type=color]::-webkit-color-swatch{border-radius:50%;border:none;}
+.hx{font-size:.67rem;color:var(--muted);font-family:monospace;min-width:54px;}
+
+/* direction pills */
+.dir-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+.dir-pill{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;
+  padding:.5rem .2rem;border:1.5px solid var(--border);border-radius:var(--r);
+  cursor:pointer;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);transition:border-color .18s,color .18s,background .18s;
+  user-select:none;
+}
+.dir-pill svg{width:22px;height:22px;opacity:.6;transition:opacity .18s;}
+.dir-pill:hover{border-color:var(--gold);color:var(--gold);}
+.dir-pill:hover svg{opacity:1;}
+.dir-pill.active{border-color:var(--gold);color:var(--gold);background:rgba(184,151,90,.08);}
+.dir-pill.active svg{opacity:1;}
+
+/* sliders */
+.sl-list{display:flex;flex-direction:column;gap:1rem;}
+.si{display:flex;flex-direction:column;gap:.3rem;}
+.si .sl{display:flex;justify-content:space-between;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.si .sl span{color:var(--ink);font-weight:500;}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:2px;background:var(--border);
+  border-radius:2px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--gold);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+
+.cta{
+  display:block;width:100%;padding:.82rem;background:var(--ink);color:#fff;
+  border:none;border-radius:var(--r);font-family:'Jost',sans-serif;font-size:.68rem;
+  letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .25s,letter-spacing .2s;
+}
+.cta:hover{background:var(--gold);letter-spacing:.3em;}
+
+@media(max-width:820px){
+  main{grid-template-columns:1fr;}
+  header{padding:1.3rem 1.6rem;}
+  .preview{padding:2rem 1.4rem;}
+  .sidebar{position:static;max-height:none;border-left:none;border-top:1px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Espacio<em>Aura</em>Studio</div>
+  <div class="tagline">Selector de Mesadas</div>
+</header>
+
+<main>
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div>
+      <div class="sec-lbl">Vista previa</div>
+      <div class="ct-wrap">
+        <div class="ct-top"><canvas class="mc" id="cvTop"></canvas></div>
+        <div class="ct-front"><canvas class="mc" id="cvFront"></canvas></div>
+        <div class="ct-shadow"></div>
+      </div>
+      <div class="action-row" style="margin-top:.9rem;">
+        <button class="btn-ghost" onclick="regenerate()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M1 4v6h6M23 20v-6h-6"/>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+          </svg>
+          Nuevo aleatorio
+        </button>
+        <button class="btn-dl" onclick="downloadImage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar imagen
+        </button>
+        <span class="notice" id="notice">Renderizando…</span>
+      </div>
+    </div>
+    <div>
+      <div class="sec-lbl">Paleta activa</div>
+      <div class="pal-strip" id="palStrip">
+        <div class="sw" id="sw0"></div>
+        <div class="sw" id="sw1"></div>
+        <div class="sw" id="sw2"></div>
+        <div class="sw" id="sw3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Colores -->
+    <div class="grp">
+      <h3>Colores</h3>
+      <div class="color-list">
+        <div class="cr">
+          <label>Base</label>
+          <input type="color" id="cBase" value="#f2f0ea">
+          <span class="hx" id="hBase">#f2f0ea</span>
+        </div>
+        <div class="cr">
+          <label>Vena 1</label>
+          <input type="color" id="cV1" value="#a8b8cc">
+          <span class="hx" id="hV1">#a8b8cc</span>
+        </div>
+        <div class="cr">
+          <label>Vena 2</label>
+          <input type="color" id="cV2" value="#d6cfb4">
+          <span class="hx" id="hV2">#d6cfb4</span>
+        </div>
+        <div class="cr">
+          <label>Vena 3</label>
+          <input type="color" id="cV3" value="#7a8fa8">
+          <span class="hx" id="hV3">#7a8fa8</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <!-- Proporciones -->
+    <div class="grp">
+      <h3>Proporciones</h3>
+      <div class="sl-list">
+        <div class="si">
+          <div class="sl">Presencia base <span id="vBase">60%</span></div>
+          <input type="range" id="rBase" min="10" max="85" value="60">
+        </div>
+        <div class="si">
+          <div class="sl">Presencia vena 1 <span id="vV1">20%</span></div>
+          <input type="range" id="rV1" min="3" max="55" value="20">
+        </div>
+        <div class="si">
+          <div class="sl">Presencia vena 2 <span id="vV2">12%</span></div>
+          <input type="range" id="rV2" min="3" max="55" value="12">
+        </div>
+        <div class="si">
+          <div class="sl">Presencia vena 3 <span id="vV3">8%</span></div>
+          <input type="range" id="rV3" min="3" max="55" value="8">
+        </div>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <!-- Dirección -->
+    <div class="grp">
+      <h3>Dirección de venas</h3>
+      <div class="dir-row">
+        <div class="dir-pill" data-dir="horizontal" onclick="setDir('horizontal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <line x1="3" y1="8"  x2="21" y2="8"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="16" x2="21" y2="16"/>
+          </svg>
+          Horizontal
+        </div>
+        <div class="dir-pill active" data-dir="diagonal" onclick="setDir('diagonal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <line x1="4"  y1="20" x2="20" y2="4"/>
+            <line x1="4"  y1="14" x2="14" y2="4"/>
+            <line x1="10" y1="20" x2="20" y2="10"/>
+          </svg>
+          Diagonal
+        </div>
+        <div class="dir-pill" data-dir="vertical" onclick="setDir('vertical')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <line x1="8"  y1="3" x2="8"  y2="21"/>
+            <line x1="12" y1="3" x2="12" y2="21"/>
+            <line x1="16" y1="3" x2="16" y2="21"/>
+          </svg>
+          Vertical
+        </div>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <!-- Patrón -->
+    <div class="grp">
+      <h3>Ajustes de patrón</h3>
+      <div class="sl-list">
+        <div class="si">
+          <div class="sl">Escala <span id="vScale">100%</span></div>
+          <input type="range" id="rScale" min="30" max="260" value="100">
+        </div>
+        <div class="si">
+          <div class="sl">Suavidad <span id="vSmooth">65%</span></div>
+          <input type="range" id="rSmooth" min="0" max="100" value="65">
+        </div>
+        <div class="si">
+          <div class="sl">Turbulencia <span id="vTurb">50%</span></div>
+          <input type="range" id="rTurb" min="0" max="100" value="50">
+        </div>
+        <div class="si">
+          <div class="sl">Contraste <span id="vContrast">45%</span></div>
+          <input type="range" id="rContrast" min="0" max="100" value="45">
+        </div>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <button class="cta" onclick="exportConfig()">Guardar configuración</button>
+  </div>
+</main>
+
+<script>
+/* ═══════════════════════════════════════
+   PERLIN NOISE
+═══════════════════════════════════════ */
+const P = new Uint8Array(512);
+
+function rebuildPerm(s) {
+  const p = Array.from({length:256},(_,i)=>i);
+  let v = (s ^ 0xdeadbeef) >>> 0;
+  for(let i=255;i>0;i--){
+    v = (v*1664525+1013904223)>>>0;
+    const j = v%(i+1);
+    [p[i],p[j]]=[p[j],p[i]];
+  }
+  for(let i=0;i<512;i++) P[i]=p[i&255];
+}
+
+const fade = t => t*t*t*(t*(t*6-15)+10);
+const lerp  = (a,b,t) => a+(b-a)*t;
+function grad(h,x,y){
+  switch(h&3){case 0:return x+y;case 1:return-x+y;case 2:return x-y;default:return-x-y;}
+}
+function perlin(x,y){
+  const xi=Math.floor(x)&255, yi=Math.floor(y)&255;
+  const xf=x-Math.floor(x), yf=y-Math.floor(y);
+  const u=fade(xf), v=fade(yf);
+  const aa=P[P[xi]+yi],ab=P[P[xi]+yi+1],ba=P[P[xi+1]+yi],bb=P[P[xi+1]+yi+1];
+  return lerp(lerp(grad(aa,xf,yf),grad(ba,xf-1,yf),u),lerp(grad(ab,xf,yf-1),grad(bb,xf-1,yf-1),u),v);
+}
+function fbm(x,y,oct,lac,gain){
+  let v=0,a=1,f=1,mx=0;
+  for(let i=0;i<oct;i++){v+=perlin(x*f,y*f)*a;mx+=a;a*=gain;f*=lac;}
+  return v/mx;
+}
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let seed = 31415;
+const DIR_ANGLES = {horizontal:90, diagonal:45, vertical:0};
+
+const S = {
+  cBase:'#f2f0ea', cV1:'#a8b8cc', cV2:'#d6cfb4', cV3:'#7a8fa8',
+  pBase:60, pV1:20, pV2:12, pV3:8,
+  dir:'diagonal',
+  scale:100, smooth:65, turb:50, contrast:45,
+};
+
+/* ═══════════════════════════════════════
+   COLOR UTILS
+═══════════════════════════════════════ */
+function hexToRgb(h){
+  h=h.replace('#','');
+  if(h.length===3)h=h.split('').map(c=>c+c).join('');
+  const n=parseInt(h,16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+
+// 4-stop gradient blend with smooth transitions
+function blend4(c0,c1,c2,c3, w0,w1,w2,w3, t){
+  const tot=w0+w1+w2+w3;
+  const b0=w0/tot, b1=(w0+w1)/tot, b2=(w0+w1+w2)/tot;
+  const a=hexToRgb(c0),b_=hexToRgb(c1),c_=hexToRgb(c2),d=hexToRgb(c3);
+  let lt, st, from, to;
+  if(t<=b0){
+    lt=b0>0?t/b0:0;
+    from=a;to=b_;
+  } else if(t<=b1){
+    lt=(b1-b0)>0?(t-b0)/(b1-b0):0;
+    from=b_;to=c_;
+  } else if(t<=b2){
+    lt=(b2-b1)>0?(t-b1)/(b2-b1):0;
+    from=c_;to=d;
+  } else {
+    lt=(1-b2)>0?(t-b2)/(1-b2):0;
+    from=d;to=a; // wrap back to base for natural look
+  }
+  st=lt*lt*(3-2*lt); // smoothstep
+  return [
+    (from[0]+(to[0]-from[0])*st)|0,
+    (from[1]+(to[1]-from[1])*st)|0,
+    (from[2]+(to[2]-from[2])*st)|0,
+  ];
+}
+
+/* ═══════════════════════════════════════
+   MARBLE RENDER
+═══════════════════════════════════════ */
+function renderMarble(canvas, W, H){
+  const DPR = Math.min(window.devicePixelRatio||1, 2);
+  const RW=W*DPR|0, RH=H*DPR|0;
+  canvas.width=RW; canvas.height=RH;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(RW, RH);
+  const data = img.data;
+
+  const OCT=8, LAC=2.05;
+  const gain    = 0.28 + (S.smooth/100)*0.40; // 0.28–0.68
+  const sc      = (100/S.scale)*1.6;
+  const turb    = 0.55 + (S.turb/100)*1.1;    // domain warp strength
+  const contrast= 0.55 + (S.contrast/100)*1.5;
+
+  // Direction angle
+  const angle = DIR_ANGLES[S.dir] * Math.PI/180;
+  const cosA=Math.cos(angle), sinA=Math.sin(angle);
+
+  for(let py=0;py<RH;py++){
+    for(let px=0;px<RW;px++){
+      // Normalised, then rotated
+      const nx0=(px/RW)*3, ny0=(py/RH)*3;
+      const nx = nx0*cosA - ny0*sinA;
+      const ny = nx0*sinA + ny0*cosA;
+
+      const sx=nx*sc, sy=ny*sc;
+
+      // Layer 1 warp
+      const wx1 = fbm(sx+0.0, sy+0.0, OCT, LAC, gain) * turb;
+      const wy1 = fbm(sx+5.2, sy+1.3, OCT, LAC, gain) * turb;
+      // Layer 2 warp (nested — gives the silky "flowing cloth" look)
+      const wx2 = fbm(sx+wx1+2.4, sy+wy1+8.1, OCT, LAC, gain) * turb * 0.5;
+      const wy2 = fbm(sx+wx1+7.2, sy+wy1+3.7, OCT, LAC, gain) * turb * 0.5;
+      // Layer 3 — fine detail streaks (like the photo's thin lines)
+      const wx3 = fbm(sx+wx2+1.1, sy+wy2+4.5, 5, LAC, gain*0.7) * turb * 0.2;
+      const wy3 = fbm(sx+wx2+9.0, sy+wy2+0.6, 5, LAC, gain*0.7) * turb * 0.2;
+
+      const v = fbm(sx+wx1+wx2+wx3, sy+wy1+wy2+wy3, OCT, LAC, gain);
+
+      // Remap [-1,1]→[0,1] then apply contrast curve
+      let t = (v+1)*0.5;
+      t = Math.pow(Math.max(0,Math.min(1,t)), contrast);
+
+      const [r,g,b] = blend4(S.cBase,S.cV1,S.cV2,S.cV3, S.pBase,S.pV1,S.pV2,S.pV3, t);
+      const i=(py*RW+px)*4;
+      data[i]=r; data[i+1]=g; data[i+2]=b; data[i+3]=255;
+    }
+  }
+  ctx.putImageData(img,0,0);
+}
+
+/* ═══════════════════════════════════════
+   PALETTE STRIP
+═══════════════════════════════════════ */
+function updatePalette(){
+  const tot=S.pBase+S.pV1+S.pV2+S.pV3;
+  [[0,S.cBase,S.pBase],[1,S.cV1,S.pV1],[2,S.cV2,S.pV2],[3,S.cV3,S.pV3]].forEach(([i,c,w])=>{
+    document.getElementById('sw'+i).style.cssText=`background:${c};flex:${w/tot}`;
+  });
+}
+
+/* ═══════════════════════════════════════
+   RENDER SCHEDULER
+═══════════════════════════════════════ */
+let rtimer=null;
+function scheduleRender(ms=130){
+  clearTimeout(rtimer);
+  rtimer=setTimeout(doRender,ms);
+}
+function doRender(){
+  const n=document.getElementById('notice');
+  n.classList.add('on');
+  requestAnimationFrame(()=>{
+    rebuildPerm(seed|0);
+    const topEl=document.getElementById('cvTop');
+    const frtEl=document.getElementById('cvFront');
+    const W=topEl.parentElement.clientWidth||700;
+    renderMarble(topEl, W, 230);
+    renderMarble(frtEl, W, 26);
+    updatePalette();
+    n.classList.remove('on');
+  });
+}
+function rndInt(a,b){return (Math.random()*(b-a)+a)|0;}
+function rndFloat(a,b){return Math.random()*(b-a)+a;}
+
+// Generate a pleasant random color given a hue range and lightness constraints
+function rndColor(hMin,hMax,sMin,sMax,lMin,lMax){
+  const h=rndFloat(hMin,hMax);
+  const s=rndFloat(sMin,sMax);
+  const l=rndFloat(lMin,lMax);
+  // HSL → HEX
+  const a=s*(l<0.5?l:1-l);
+  const f=n=>{const k=(n+h/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+  return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
+}
+
+// Marble-specific palettes: pick a random palette family then vary within it
+const PALETTE_FAMILIES = [
+  // White/grey/blue — like the reference photo
+  ()=>[
+    rndColor(0,360,0,.15,.88,.97),   // base: near white
+    rndColor(200,240,.15,.45,.45,.7),// vena1: blue-grey
+    rndColor(40,70,.2,.4,.7,.85),    // vena2: warm cream
+    rndColor(200,250,.2,.5,.3,.55),  // vena3: dark blue-grey
+  ],
+  // Black/gold
+  ()=>[
+    rndColor(0,360,0,.1,.08,.22),
+    rndColor(35,55,.5,.8,.45,.65),
+    rndColor(35,50,.3,.6,.65,.8),
+    rndColor(0,360,0,.1,.35,.5),
+  ],
+  // Green/earth
+  ()=>[
+    rndColor(90,150,.1,.3,.75,.92),
+    rndColor(100,160,.2,.5,.3,.55),
+    rndColor(30,60,.2,.45,.6,.8),
+    rndColor(90,140,.3,.6,.2,.45),
+  ],
+  // Warm beige/terracotta
+  ()=>[
+    rndColor(25,45,.15,.35,.82,.95),
+    rndColor(15,35,.3,.55,.45,.65),
+    rndColor(25,50,.2,.45,.65,.82),
+    rndColor(10,30,.4,.7,.3,.5),
+  ],
+  // Pink/rose
+  ()=>[
+    rndColor(330,360,.1,.25,.85,.95),
+    rndColor(320,350,.2,.45,.55,.75),
+    rndColor(10,30,.15,.35,.7,.88),
+    rndColor(310,340,.25,.5,.4,.6),
+  ],
+  // Full random — anything goes
+  ()=>{
+    const h=rndFloat(0,360);
+    return [
+      rndColor(h,h+20,0,.2,.8,.96),
+      rndColor(h+60,h+100,.2,.5,.35,.65),
+      rndColor(h+20,h+50,.15,.4,.6,.82),
+      rndColor(h+80,h+130,.25,.55,.25,.5),
+    ];
+  },
+];
+
+function regenerate(){
+  seed = Math.random()*999999|0;
+
+  // Pick a random palette family
+  const family = PALETTE_FAMILIES[rndInt(0,PALETTE_FAMILIES.length)];
+  const [c0,c1,c2,c3] = family();
+
+  S.cBase=c0; S.cV1=c1; S.cV2=c2; S.cV3=c3;
+
+  // Random proportions (base always dominant)
+  S.pBase = rndInt(40,78);
+  S.pV1   = rndInt(8,35);
+  S.pV2   = rndInt(5,25);
+  S.pV3   = rndInt(3,18);
+
+  // Random pattern params
+  S.scale    = rndInt(45,220);
+  S.smooth   = rndInt(25,90);
+  S.turb     = rndInt(20,85);
+  S.contrast = rndInt(20,75);
+
+  // Random direction
+  const dirs = ['horizontal','diagonal','vertical'];
+  const newDir = dirs[rndInt(0,3)];
+  S.dir = newDir;
+
+  // Sync all UI controls
+  const colorMap = [['cBase','hBase'],['cV1','hV1'],['cV2','hV2'],['cV3','hV3']];
+  const colorKeys = ['cBase','cV1','cV2','cV3'];
+  colorMap.forEach(([id,hid],i)=>{
+    const v = S[colorKeys[i]];
+    document.getElementById(id).value = v;
+    document.getElementById(hid).textContent = v;
+  });
+
+  const sliderMap = [
+    ['rBase','pBase','vBase','%'],['rV1','pV1','vV1','%'],
+    ['rV2','pV2','vV2','%'],['rV3','pV3','vV3','%'],
+    ['rScale','scale','vScale','%'],['rSmooth','smooth','vSmooth','%'],
+    ['rTurb','turb','vTurb','%'],['rContrast','contrast','vContrast','%'],
+  ];
+  sliderMap.forEach(([id,k,vid,suf])=>{
+    document.getElementById(id).value = S[k];
+    document.getElementById(vid).textContent = S[k]+suf;
+  });
+
+  document.querySelectorAll('.dir-pill').forEach(el=>{
+    el.classList.toggle('active', el.dataset.dir===newDir);
+  });
+
+  scheduleRender(0);
+}
+
+/* ═══════════════════════════════════════
+   DOWNLOAD
+═══════════════════════════════════════ */
+function downloadImage(){
+  // Render a high-res version (2000px wide) just for download
+  const offCanvas = document.createElement('canvas');
+  const W=2000, H=Math.round(2000*(230/700));
+  rebuildPerm(seed|0);
+  renderMarble(offCanvas, W, H);
+  offCanvas.toBlob(blob=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='mesada-marmolada.png';
+    a.click();
+  },'image/png');
+}
+
+/* ═══════════════════════════════════════
+   DIRECTION
+═══════════════════════════════════════ */
+function setDir(d){
+  S.dir=d;
+  document.querySelectorAll('.dir-pill').forEach(el=>{
+    el.classList.toggle('active', el.dataset.dir===d);
+  });
+  scheduleRender(0);
+}
+
+/* ═══════════════════════════════════════
+   EXPORT JSON
+═══════════════════════════════════════ */
+function exportConfig(){
+  const cfg={
+    colorBase:S.cBase, vena1:S.cV1, vena2:S.cV2, vena3:S.cV3,
+    proporcionBase:S.pBase+'%', proporcionVena1:S.pV1+'%',
+    proporcionVena2:S.pV2+'%', proporcionVena3:S.pV3+'%',
+    direccion:S.dir, escala:S.scale+'%',
+    suavidad:S.smooth+'%', turbulencia:S.turb+'%', contraste:S.contrast+'%',
+  };
+  alert('✓ Configuración:\n\n'+Object.entries(cfg).map(([k,v])=>k+': '+v).join('\n'));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}));
+  a.download='mesada-marmolada.json';
+  a.click();
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+
+  // Color pickers
+  [['cBase','cBase','hBase'],['cV1','cV1','hV1'],['cV2','cV2','hV2'],['cV3','cV3','hV3']].forEach(([id,k,h])=>{
+    document.getElementById(id).addEventListener('input',e=>{
+      S[k]=e.target.value;
+      document.getElementById(h).textContent=e.target.value;
+      scheduleRender(180);
+    });
+  });
+
+  // Proportion & pattern sliders
+  [
+    ['rBase','pBase','vBase','%'],
+    ['rV1','pV1','vV1','%'],
+    ['rV2','pV2','vV2','%'],
+    ['rV3','pV3','vV3','%'],
+    ['rScale','scale','vScale','%'],
+    ['rSmooth','smooth','vSmooth','%'],
+    ['rTurb','turb','vTurb','%'],
+    ['rContrast','contrast','vContrast','%'],
+  ].forEach(([id,k,vid,suf])=>{
+    document.getElementById(id).addEventListener('input',e=>{
+      S[k]=+e.target.value;
+      document.getElementById(vid).textContent=e.target.value+suf;
+      scheduleRender(140);
+    });
+  });
+
+  scheduleRender(60);
+});
+
+window.addEventListener('resize',()=>scheduleRender(300));
+</script>
+</body>
+</html>
